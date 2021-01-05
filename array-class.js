@@ -7,11 +7,15 @@
 // *NOTE*
 // Be sure to export the memory module and then import it using require.
 
-const memory = require('./memory');
+const Memory = require('./memory');
+
+// New Instance of Memory class
+let memory = new Memory();
 
 class Array {
     constructor() {
         this.length = 0;
+        this._capacity = 0;
         this.ptr = memory.allocate(this.length);
     }
     push(value) {
@@ -29,6 +33,7 @@ class Array {
         }
         memory.copy(this.ptr, oldPtr, this.length);
         memory.free(oldPtr);
+        this._capacity = size;
     }
     get(index) {
         if(index < 0 || index >= this.length) {
@@ -41,7 +46,7 @@ class Array {
             throw new Error('Index error');
         }
         const value = memory.get(this.ptr + this.length - 1);
-        this.length++;
+        this.length--;
         return value;
     }
     insert(index, value) {
@@ -63,3 +68,7 @@ class Array {
         this.length--;
     }
 }
+
+Array.SIZE_RATIO = 3;
+
+module.exports = Array;
